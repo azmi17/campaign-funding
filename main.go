@@ -23,10 +23,11 @@ func main() {
 	userHandler := handler.NewUserHanlder(userService)
 
 	router := gin.Default()
-	api := router.Group("api/v1", userHandler.RegisterUser)
+	api := router.Group("api/v1")
 
 	// routing path API
-	api.POST("/users")
+	api.POST("/users", userHandler.RegisterUser)
+	api.POST("/sessions", userHandler.Login)
 
 	router.Run(":3000")
 }

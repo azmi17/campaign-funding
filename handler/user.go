@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"go-campaign-funding/auth"
 	"go-campaign-funding/helper"
 	"go-campaign-funding/user"
 	"net/http"
@@ -11,10 +12,11 @@ import (
 
 type userHandler struct {
 	userService user.Service
+	authService auth.Service
 }
 
-func NewUserHanlder(userService user.Service) *userHandler {
-	return &userHandler{userService}
+func NewUserHanlder(userService user.Service, authService auth.Service) *userHandler {
+	return &userHandler{userService, authService}
 }
 
 func (handler *userHandler) RegisterUser(c *gin.Context) {
@@ -34,7 +36,6 @@ func (handler *userHandler) RegisterUser(c *gin.Context) {
 	}
 
 	newUser, err := handler.userService.RegisterUser(input)
-
 	// if true // debug check
 	if err != nil {
 		response := helper.ApiResponse("Register account failed", http.StatusBadRequest, "failed", nil)
@@ -42,9 +43,14 @@ func (handler *userHandler) RegisterUser(c *gin.Context) {
 		return
 	}
 
-	// token, err := h.jwtService.GenerateToken()
+	token, err := handler.authService.GenerateToken(newUser.ID)
+	if err != nil {
+		response := helper.ApiResponse("Register account failed", http.StatusBadRequest, "failed", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
 
-	formatter := user.FormatUser(newUser, "u73bD9RD9gTXG8W")
+	formatter := user.FormatUser(newUser, token)
 
 	response := helper.ApiResponse("Account has been registered", http.StatusOK, "Success", formatter)
 
@@ -83,7 +89,14 @@ func (handler *userHandler) Login(c *gin.Context) {
 		return
 	}
 
-	formatter := user.FormatUser(loggedInUser, "u73bD9RD9gTXG8W")
+	token, err := handler.authService.GenerateToken(loggedInUser.ID)
+	if err != nil {
+		response := helper.ApiResponse("Login failed", http.StatusBadRequest, "failed", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	formatter := user.FormatUser(loggedInUser, token)
 
 	response := helper.ApiResponse("Successfuly logged in", http.StatusOK, "Success", formatter)
 
@@ -154,7 +167,7 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 		return
 	}
 
-	// nantinya dapat dari JWT (masih harcode)
+	// nantinya dapat dari JWT (masih hardcode)
 	userID := 1
 
 	path := fmt.Sprintf("images/%d-%s", userID, file.Filename)

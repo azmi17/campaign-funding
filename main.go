@@ -1,6 +1,7 @@
 package main
 
 import (
+	"go-campaign-funding/auth"
 	"go-campaign-funding/handler"
 	"go-campaign-funding/user"
 	"log"
@@ -20,8 +21,8 @@ func main() {
 
 	userRepository := user.NewRepository(db)
 	userService := user.NewService(userRepository)
-
-	userHandler := handler.NewUserHanlder(userService)
+	authService := auth.NewService()
+	userHandler := handler.NewUserHanlder(userService, authService)
 
 	router := gin.Default()
 	api := router.Group("api/v1")

@@ -15,6 +15,7 @@ type Campaign struct {
 	Slug             string
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
+	CampaignImages   []CampaignImage // relaitonship: A campaign has many images..
 }
 
 type CampaignImage struct {

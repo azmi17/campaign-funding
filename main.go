@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"go-campaign-funding/auth"
+	"go-campaign-funding/campaign"
 	"go-campaign-funding/handler"
 	"go-campaign-funding/helper"
 	"go-campaign-funding/user"
@@ -24,6 +26,18 @@ func main() {
 	}
 
 	userRepository := user.NewRepository(db)
+
+	campaignRepository := campaign.NewRepository(db)
+	// campaigns, _ := campaignRepository.FindAll()
+	campaigns, _ := campaignRepository.FindByUserID(4)
+	fmt.Println("debug")
+	fmt.Println("debug")
+	fmt.Println("debug")
+	fmt.Println(len(campaigns))
+	for _, campaign := range campaigns {
+		fmt.Printf("Name: %s \n", campaign.Name)
+	}
+
 	userService := user.NewService(userRepository)
 	authService := auth.NewService()
 

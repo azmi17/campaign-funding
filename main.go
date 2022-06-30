@@ -31,16 +31,18 @@ func main() {
 	// Service TEST
 	campaignRepository := campaign.NewRepository(db)
 	campaignService := campaign.NewService(campaignRepository)
-
-	authService := auth.NewService()
-
-	// Get All Campaign
-	campaigns, _ := campaignService.FindCampaigns(3)
+	// Get All Campaigns
+	campaigns, _ := campaignService.FindCampaigns(0)
 	fmt.Println("DEBUG MODE..")
 	fmt.Println("DEBUG MODE..")
 	fmt.Println("Service TESTS..")
-	fmt.Println("Total Campaign Data:", len(campaigns))
+	if len(campaigns) > 0 {
+		fmt.Println("Total Campaign Data:", len(campaigns))
+	} else {
+		fmt.Println("Data not found")
+	}
 
+	authService := auth.NewService()
 	userHandler := handler.NewUserHanlder(userService, authService)
 
 	router := gin.Default()

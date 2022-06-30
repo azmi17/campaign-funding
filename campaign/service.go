@@ -14,17 +14,17 @@ func NewService(repository Repository) *service {
 
 func (s *service) FindCampaigns(userID int) ([]Campaign, error) {
 
-	// If client send params by userID
-	if userID != 0 {
-		campaigns, err := s.repository.FindByUserID(userID)
+	// If client are not send params by userID, so get all datas of campaigns..
+	if userID == 0 {
+		campaigns, err := s.repository.FindAll()
 		if err != nil {
 			return campaigns, err
 		}
 		return campaigns, nil
 	}
 
-	// If client are not send params by userID, so get all datas of campaigns..
-	campaigns, err := s.repository.FindAll()
+	// If client send params by userID
+	campaigns, err := s.repository.FindByUserID(userID)
 	if err != nil {
 		return campaigns, err
 	}

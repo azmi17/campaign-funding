@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"go-campaign-funding/auth"
 	"go-campaign-funding/campaign"
 	"go-campaign-funding/handler"
@@ -31,19 +30,10 @@ func main() {
 	// Service TEST
 	campaignRepository := campaign.NewRepository(db)
 	campaignService := campaign.NewService(campaignRepository)
-	// Get All Campaigns
-	campaigns, _ := campaignService.FindCampaigns(0)
-	fmt.Println("DEBUG MODE..")
-	fmt.Println("DEBUG MODE..")
-	fmt.Println("Service TESTS..")
-	if len(campaigns) > 0 {
-		fmt.Println("Total Campaign Data:", len(campaigns))
-	} else {
-		fmt.Println("Data not found")
-	}
 
 	authService := auth.NewService()
 	userHandler := handler.NewUserHanlder(userService, authService)
+	campaignHandler := handler.NewCampaignHandler(campaignService)
 
 	router := gin.Default()
 	api := router.Group("api/v1")
@@ -53,6 +43,7 @@ func main() {
 	api.POST("/sessions", userHandler.Login)
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploadAvatar)
+	api.GET("/campaigns", campaignHandler.GetCampaigns)
 
 	router.Run(":3000")
 }

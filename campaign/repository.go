@@ -11,7 +11,7 @@ type repository struct {
 	db *gorm.DB
 }
 
-// Untuk membuat instance dari Struct Repository agar bisa diakses dari luar package
+// Untuk membuat instance dari Struct Repository ini agar bisa diakses dari luar package
 func NewRepository(db *gorm.DB) *repository {
 	return &repository{db}
 }

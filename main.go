@@ -26,25 +26,20 @@ func main() {
 	}
 
 	userRepository := user.NewRepository(db)
-
-	// Test layer repository: campaign Preload campaign_images
-	campaignRepository := campaign.NewRepository(db)
-	// campaigns, _ := campaignRepository.FindAll()
-	campaigns, _ := campaignRepository.FindByUserID(4)
-	fmt.Println("debug")
-	fmt.Println("debug")
-	fmt.Println("debug")
-	fmt.Println(len(campaigns))
-	for _, campaign := range campaigns {
-		fmt.Printf("Name: %s \n", campaign.Name)
-		if len(campaign.CampaignImages) > 0 {
-			fmt.Println("Total Img:", len(campaign.CampaignImages))
-			fmt.Printf("Main Img: %s \n", campaign.CampaignImages[0].FileName)
-		}
-	}
-
 	userService := user.NewService(userRepository)
+
+	// Service TEST
+	campaignRepository := campaign.NewRepository(db)
+	campaignService := campaign.NewService(campaignRepository)
+
 	authService := auth.NewService()
+
+	// Get All Campaign
+	campaigns, _ := campaignService.FindCampaigns(3)
+	fmt.Println("DEBUG MODE..")
+	fmt.Println("DEBUG MODE..")
+	fmt.Println("Service TESTS..")
+	fmt.Println("Total Campaign Data:", len(campaigns))
 
 	userHandler := handler.NewUserHanlder(userService, authService)
 

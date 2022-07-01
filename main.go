@@ -36,6 +36,8 @@ func main() {
 	campaignHandler := handler.NewCampaignHandler(campaignService)
 
 	router := gin.Default()
+	router.Static("/images", "./images") // to access path image file in server..
+
 	api := router.Group("api/v1")
 
 	// routing path API

@@ -29,6 +29,7 @@ func (handler *campaignHandler) GetCampaigns(c *gin.Context) {
 	// convert str to int (w ignoring an err)
 	userID, _ := strconv.Atoi(c.Query("user_id"))
 
+	var campaigns []campaign.Campaign
 	campaigns, err := handler.service.GetCampaigns(userID)
 	if err != nil {
 		response := helper.ApiResponse("Error to get campaigns", http.StatusBadRequest, "failed", nil)
@@ -36,6 +37,6 @@ func (handler *campaignHandler) GetCampaigns(c *gin.Context) {
 		return
 	}
 
-	response := helper.ApiResponse("List of campaigns", http.StatusOK, "success", campaigns)
+	response := helper.ApiResponse("List of campaigns", http.StatusOK, "success", campaign.FormatCampaigns(campaigns))
 	c.JSON(http.StatusOK, response)
 }

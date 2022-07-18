@@ -33,23 +33,6 @@ func main() {
 
 	authService := auth.NewService()
 
-	// Test Service CreateCampaign
-	inputTest := campaign.CreateCampaignInput{}
-	inputTest.Name = "Making start-up AZ17"
-	inputTest.ShortDescription = "Just Short"
-	inputTest.Description = "Lorem Ipsum Dolor Sit Amet"
-	inputTest.GoalAmount = 100000000
-	inputTest.Perks = "Test One, Test Two, Test Three"
-
-	// get userID from Db
-	inputUser, _ := userService.GetUserByID(4)
-	inputTest.User = inputUser
-
-	_, err = campaignService.CreateCampaign(inputTest)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
 	userHandler := handler.NewUserHanlder(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
 
@@ -63,8 +46,10 @@ func main() {
 	api.POST("/sessions", userHandler.Login)
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploadAvatar)
+
 	api.GET("/campaigns", campaignHandler.GetCampaigns)
 	api.GET("/campaigns/:id", campaignHandler.GetCampaign)
+	api.POST("/campaigns", authMiddleware(authService, userService), campaignHandler.CreateCampaign)
 
 	router.Run(":3000")
 }

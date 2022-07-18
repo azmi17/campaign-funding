@@ -3,6 +3,7 @@ package handler
 import (
 	"go-campaign-funding/campaign"
 	"go-campaign-funding/helper"
+	"go-campaign-funding/user"
 	"net/http"
 	"strconv"
 
@@ -66,7 +67,33 @@ func (handler *campaignHandler) GetCampaign(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-// Tangkap parameter dari user ke input struct
-// ambil current user dari jwt/handler
-// panggil service, parameternya input struct (dan juga buat slug)
-// panggil repo untuk simpan data campaign baru
+func (handler *campaignHandler) CreateCampaign(c *gin.Context) {
+
+	var input campaign.CreateCampaignInput
+
+	err := c.ShouldBindJSON(&input)
+	if err != nil {
+		// Errors validations
+		errors := helper.FormatValidationError(err)
+		errorMesage := gin.H{"errors": errors}
+
+		response := helper.ApiResponse("Failed to create campaign", http.StatusUnprocessableEntity, "failed", errorMesage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	// Get current User ID
+	currentUser := c.MustGet("currentUser").(user.User)
+	input.User = currentUser
+
+	newCampaign, err := handler.service.CreateCampaign(input)
+	if err != nil {
+		response := helper.ApiResponse("Failed to create campaign", http.StatusBadRequest, "failed", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := helper.ApiResponse("Success to create campaign", http.StatusOK, "success", campaign.FormatCampaign(newCampaign))
+	c.JSON(http.StatusOK, response)
+
+}

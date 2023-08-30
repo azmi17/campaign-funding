@@ -17,7 +17,7 @@ import (
 )
 
 func main() {
-	dsn := "root:@tcp(127.0.0.1:3317)/campaign_startup?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:azmic0ps@tcp(127.0.0.1:3317)/campaign_startup?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
@@ -27,7 +27,6 @@ func main() {
 	userRepository := user.NewRepository(db)
 	userService := user.NewService(userRepository)
 
-	// Service TEST
 	campaignRepository := campaign.NewRepository(db)
 	campaignService := campaign.NewService(campaignRepository)
 
@@ -51,6 +50,7 @@ func main() {
 	api.GET("/campaigns/:id", campaignHandler.GetCampaign)
 	api.POST("/campaigns", authMiddleware(authService, userService), campaignHandler.CreateCampaign)
 	api.PUT("/campaigns/:id", authMiddleware(authService, userService), campaignHandler.UpdateCampaign)
+	api.POST("/campaign-images", authMiddleware(authService, userService), campaignHandler.UploadImage)
 
 	router.Run(":3000")
 }
@@ -91,7 +91,7 @@ func authMiddleware(authService auth.Service, userService user.Service) gin.Hand
 		// Get userId from user's payload
 		userId := int(payload["user_id"].(float64))
 		user, err := userService.GetUserByID(userId) // <= searching userId into Db
-		if err != nil {                              // failed
+		if err != nil {
 			response := helper.ApiResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 			return
@@ -99,6 +99,7 @@ func authMiddleware(authService auth.Service, userService user.Service) gin.Hand
 
 		// Success
 		c.Set("currentUser", user)
+
 	}
 
 }

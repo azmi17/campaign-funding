@@ -143,7 +143,7 @@ func (handler *campaignHandler) UploadImage(c *gin.Context) {
 		errors := helper.FormatValidationError(err)
 		errorMesage := gin.H{"errors": errors}
 
-		response := helper.ApiResponse("Failed to update campaign", http.StatusUnprocessableEntity, "failed", errorMesage)
+		response := helper.ApiResponse("Failed to upload campaign image", http.StatusUnprocessableEntity, "failed", errorMesage)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}

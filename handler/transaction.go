@@ -68,7 +68,7 @@ func (h *transactionHandler) CreateTransaction(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
-	// Get current User ID
+	// Get current User ID request..
 	currentUser := c.MustGet("currentUser").(user.User)
 	input.User = currentUser
 
@@ -79,6 +79,6 @@ func (h *transactionHandler) CreateTransaction(c *gin.Context) {
 		return
 	}
 
-	response := helper.ApiResponse("Success to update campaign", http.StatusOK, "success", newTransaction)
+	response := helper.ApiResponse("Success to update campaign", http.StatusOK, "success", transaction.FormatTransaction(newTransaction))
 	c.JSON(http.StatusOK, response)
 }

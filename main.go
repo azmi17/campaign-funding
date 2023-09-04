@@ -5,6 +5,7 @@ import (
 	"go-campaign-funding/campaign"
 	"go-campaign-funding/handler"
 	"go-campaign-funding/helper"
+	"go-campaign-funding/payment"
 	"go-campaign-funding/transaction"
 	"go-campaign-funding/user"
 	"log"
@@ -32,7 +33,8 @@ func main() {
 	userService := user.NewService(userRepository)
 	campaignService := campaign.NewService(campaignRepository)
 	authService := auth.NewService()
-	transactionService := transaction.NewService(transactionRepository, campaignRepository)
+	paymentService := payment.NewService()
+	transactionService := transaction.NewService(transactionRepository, campaignRepository, paymentService)
 
 	userHandler := handler.NewUserHanlder(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)

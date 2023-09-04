@@ -58,14 +58,6 @@ func (handler *userHandler) RegisterUser(c *gin.Context) {
 }
 
 func (handler *userHandler) Login(c *gin.Context) {
-	/*
-		user memasukan input (email & password)
-		input ditangkap handler
-		mapping dari input user ke input struct
-		input struct passing ke service
-		di service mencari dg bantuan repository user menuju ke email.user
-		mencocokan password
-	*/
 	var input user.LoginInput
 
 	err := c.ShouldBindJSON(&input)
@@ -104,14 +96,7 @@ func (handler *userHandler) Login(c *gin.Context) {
 }
 
 func (handler *userHandler) CheckEmailAvailability(c *gin.Context) {
-	/*
-		(Check apakah email sudah terdaftar / belum ?)
-		ada input email dari user
-		input email di mapping ke struct input
-		struct input di passing ke service
-		service akan memanggil repository - email sudah ada atau belum
-		repository - db
-	*/
+
 	var input user.CheckEmailInput
 
 	err := c.ShouldBindJSON(&input)
@@ -150,14 +135,7 @@ func (handler *userHandler) CheckEmailAvailability(c *gin.Context) {
 }
 
 func (h *userHandler) UploadAvatar(c *gin.Context) {
-	/*
-	 input dari user dalam bentuk form-file
-	 simpan gambarnya di folder "images/"
-	 di service memangil repo
-	 JWT (Sementara Hardcode, seakan-akan user yang login ID = 1)
-	 repo ambil data user yg ID = 1
-	 repo update data user simpan lokasi file
-	*/
+
 	file, err := c.FormFile("avatar")
 	if err != nil {
 		data := gin.H{"is_uploaded": false}
@@ -193,5 +171,12 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 	data := gin.H{"is_uploaded": true}
 	response := helper.ApiResponse("Avatar successfully uploaded", http.StatusOK, "Success", data)
 
+	c.JSON(http.StatusOK, response)
+}
+
+func (h *userHandler) FetchUser(c *gin.Context) {
+	currentUser := c.MustGet("currentUser").(user.User)
+	formatter := user.FormatUser(currentUser, "")
+	response := helper.ApiResponse("Sucessfully fetch user data", http.StatusOK, "Success", formatter)
 	c.JSON(http.StatusOK, response)
 }

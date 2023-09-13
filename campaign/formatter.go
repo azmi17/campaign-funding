@@ -20,7 +20,7 @@ func FormatCampaign(campaign Campaign) CampaignFormatter {
 	campaignFormatter.ID = campaign.ID
 	campaignFormatter.UserID = campaign.UserID
 	campaignFormatter.Name = campaign.Name
-	campaignFormatter.ShortDescription = campaign.Description
+	campaignFormatter.ShortDescription = campaign.ShortDescription
 	campaignFormatter.GoalAmount = campaign.GoalAmount
 	campaignFormatter.CurrentAmount = campaign.CurrentAmount
 	campaignFormatter.Slug = campaign.Slug
@@ -34,11 +34,8 @@ func FormatCampaign(campaign Campaign) CampaignFormatter {
 }
 
 func FormatCampaigns(campaigns []Campaign) []CampaignFormatter {
-
 	// check if campaign is doesn't exist and it will return an empty array
-
 	campaignsFormatter := []CampaignFormatter{} // zero-value is an empty array
-
 	for _, campaign := range campaigns {
 		campaignFormatter := FormatCampaign(campaign)                      // single of campaigns
 		campaignsFormatter = append(campaignsFormatter, campaignFormatter) // total of all campaigns w appended

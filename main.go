@@ -42,7 +42,9 @@ func main() {
 	transactionHandler := handler.NewTransactionHandler(transactionService)
 
 	router := gin.Default()
-	router.Use(cors.Default())           // cors
+	router.Use(cors.Default()) // cors
+
+	router.POST("/transactions/notification", transactionHandler.GetNotification)
 	router.Static("/images", "./images") // to access path image file in server..
 
 	api := router.Group("api/v1")
@@ -65,9 +67,9 @@ func main() {
 	// transaction stuff
 	api.GET("/transactions", authMiddleware(authService, userService), transactionHandler.GetUserTransactions)
 	api.POST("/transactions", authMiddleware(authService, userService), transactionHandler.CreateTransaction)
-	api.POST("/transactions/notification", authMiddleware(authService, userService), transactionHandler.GetNotification)
+	api.POST("/transactions/notification", transactionHandler.GetNotification)
 
-	router.Run(":3000")
+	router.Run(":3131")
 }
 
 func authMiddleware(authService auth.Service, userService user.Service) gin.HandlerFunc {

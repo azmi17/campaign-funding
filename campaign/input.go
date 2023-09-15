@@ -11,7 +11,7 @@ type CreateCampaignInput struct {
 	ShortDescription string `json:"short_description" binding:"required"`
 	Description      string `json:"description" binding:"required"`
 	GoalAmount       int    `json:"goal_amount" binding:"required"`
-	Perks            string `json:"perks"` // deleted binding:required
+	Perks            string `json:"perks"` // deleted binding:required will fix soon
 	User             user.User
 }
 

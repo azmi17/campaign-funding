@@ -54,7 +54,11 @@ func main() {
 	// router.LoadHTMLGlob("web/templates/**/*")
 	router.HTMLRender = loadTemplates("./web/templates")
 
-	router.Static("/images", "./images") // to access path image file in server..
+	// to access path image file in server..
+	router.Static("/images", "./images") 
+	router.Static("/css", "./web/assets/css")
+	router.Static("/js", "./web/assets/js")
+	router.Static("/webfonts", "./web/assets/webfonts")
 	api := router.Group("api/v1")
 	
 	// Webhook belong to midtrans

@@ -10,13 +10,17 @@ import (
 	"go-campaign-funding/user"
 	"log"
 	"net/http"
+	"path/filepath"
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/multitemplate"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+
+	webHandler "go-campaign-funding/web/handler"
 )
 
 func main() {
@@ -41,14 +45,21 @@ func main() {
 	campaignHandler := handler.NewCampaignHandler(campaignService)
 	transactionHandler := handler.NewTransactionHandler(transactionService)
 
+	userWebHandler := webHandler.NewUserHandler()
+
 	router := gin.Default()
 	router.Use(cors.Default()) // cors
 
-	router.POST("/transactions/notification", transactionHandler.GetNotification)
+	// load templates
+	// router.LoadHTMLGlob("web/templates/**/*")
+	router.HTMLRender = loadTemplates("./web/templates")
+
 	router.Static("/images", "./images") // to access path image file in server..
-
 	api := router.Group("api/v1")
-
+	
+	// Webhook belong to midtrans
+	router.POST("/transactions/notification", transactionHandler.GetNotification)
+	
 	// user stuff
 	api.POST("/users", userHandler.RegisterUser)
 	api.POST("/sessions", userHandler.Login)
@@ -69,6 +80,9 @@ func main() {
 	api.POST("/transactions", authMiddleware(authService, userService), transactionHandler.CreateTransaction)
 	api.POST("/transactions/notification", transactionHandler.GetNotification)
 
+	// WEB Handler Section routes..
+	router.GET("/users", userWebHandler.Index)
+	
 	router.Run(":3131")
 }
 
@@ -120,3 +134,26 @@ func authMiddleware(authService auth.Service, userService user.Service) gin.Hand
 	}
 
 }
+
+func loadTemplates(templatesDir string) multitemplate.Renderer {
+	r := multitemplate.NewRenderer()
+  
+	layouts, err := filepath.Glob(templatesDir + "/layouts/*")
+	if err != nil {
+	  panic(err.Error())
+	}
+  
+	includes, err := filepath.Glob(templatesDir + "/**/*")
+	if err != nil {
+	  panic(err.Error())
+	}
+  
+	// Generate our templates map from our layouts/ and includes/ directories
+	for _, include := range includes {
+	  layoutCopy := make([]string, len(layouts))
+	  copy(layoutCopy, layouts)
+	  files := append(layoutCopy, include)
+	  r.AddFromFiles(filepath.Base(include), files...)
+	}
+	return r
+  }

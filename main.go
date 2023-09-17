@@ -45,7 +45,7 @@ func main() {
 	campaignHandler := handler.NewCampaignHandler(campaignService)
 	transactionHandler := handler.NewTransactionHandler(transactionService)
 
-	userWebHandler := webHandler.NewUserHandler()
+	userWebHandler := webHandler.NewUserHandler(userService)
 
 	router := gin.Default()
 	router.Use(cors.Default()) // cors
@@ -54,7 +54,7 @@ func main() {
 	// router.LoadHTMLGlob("web/templates/**/*")
 	router.HTMLRender = loadTemplates("./web/templates")
 
-	// to access path image file in server..
+	// to access path file in server..
 	router.Static("/images", "./images") 
 	router.Static("/css", "./web/assets/css")
 	router.Static("/js", "./web/assets/js")

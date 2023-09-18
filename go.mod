@@ -9,6 +9,7 @@ require (
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/gosimple/slug v1.12.0
+	github.com/leekchan/accounting v1.0.0
 	github.com/veritrans/go-midtrans v0.0.0-20210616100512-16326c5eeb00
 	golang.org/x/crypto v0.0.0-20220427172511-eb4f295cb31f
 	gorm.io/driver/mysql v1.3.3
@@ -17,6 +18,7 @@ require (
 
 require (
 	github.com/cheekybits/is v0.0.0-20150225183255-68e9c0620927 // indirect
+	github.com/cockroachdb/apd v1.1.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
@@ -31,6 +33,8 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.1 // indirect
+	github.com/pkg/errors v0.8.1 // indirect
+	github.com/shopspring/decimal v0.0.0-20180709203117-cd690d0c9e24 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
 	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2 // indirect
 	golang.org/x/sys v0.0.0-20220503163025-988cb79eb6c6 // indirect

@@ -46,7 +46,7 @@ func main() {
 	transactionHandler := handler.NewTransactionHandler(transactionService)
 
 	userWebHandler := webHandler.NewUserHandler(userService)
-	campaignWebhandler := webHandler.NewCampaignHandler(campaignService)
+	campaignWebHandler := webHandler.NewCampaignHandler(campaignService, userService)
 
 	router := gin.Default()
 	router.Use(cors.Default()) // cors management
@@ -56,15 +56,15 @@ func main() {
 	router.HTMLRender = loadTemplates("./web/templates")
 
 	// to access path file in server..
-	router.Static("/images", "./images") 
+	router.Static("/images", "./images")
 	router.Static("/css", "./web/assets/css")
 	router.Static("/js", "./web/assets/js")
 	router.Static("/webfonts", "./web/assets/webfonts")
 	api := router.Group("api/v1")
-	
+
 	// Webhook belong to midtrans
 	router.POST("/transactions/notification", transactionHandler.GetNotification)
-	
+
 	// user stuff
 	api.POST("/users", userHandler.RegisterUser)
 	api.POST("/sessions", userHandler.Login)
@@ -94,7 +94,14 @@ func main() {
 	router.GET("/users/avatar/:id", userWebHandler.NewAvatar)
 	router.POST("/users/avatar/:id", userWebHandler.UploadAvatar)
 
-	router.GET("/campaigns", campaignWebhandler.Index)
+	router.GET("/campaigns", campaignWebHandler.Index)
+	router.GET("/campaigns/new", campaignWebHandler.New)
+	router.POST("/campaigns", campaignWebHandler.Create)
+	router.GET("/campaigns/image/:id", campaignWebHandler.NewImage)
+	router.POST("/campaigns/image/:id", campaignWebHandler.CreateImage)
+	router.GET("/campaigns/edit/:id", campaignWebHandler.Edit)
+	router.POST("/campaigns/update/:id", campaignWebHandler.Update)
+	router.GET("/campaigns/show/:id", campaignWebHandler.Show)
 
 	router.Run(":3131")
 }
@@ -145,28 +152,27 @@ func authMiddleware(authService auth.Service, userService user.Service) gin.Hand
 		c.Set("currentUser", user)
 
 	}
-
 }
 
 func loadTemplates(templatesDir string) multitemplate.Renderer {
 	r := multitemplate.NewRenderer()
-  
+
 	layouts, err := filepath.Glob(templatesDir + "/layouts/*")
 	if err != nil {
-	  panic(err.Error())
+		panic(err.Error())
 	}
-  
+
 	includes, err := filepath.Glob(templatesDir + "/**/*")
 	if err != nil {
-	  panic(err.Error())
+		panic(err.Error())
 	}
-  
+
 	// Generate our templates map from our layouts/ and includes/ directories
 	for _, include := range includes {
-	  layoutCopy := make([]string, len(layouts))
-	  copy(layoutCopy, layouts)
-	  files := append(layoutCopy, include)
-	  r.AddFromFiles(filepath.Base(include), files...)
+		layoutCopy := make([]string, len(layouts))
+		copy(layoutCopy, layouts)
+		files := append(layoutCopy, include)
+		r.AddFromFiles(filepath.Base(include), files...)
 	}
 	return r
-  }
+}

@@ -48,7 +48,7 @@ func main() {
 	userWebHandler := webHandler.NewUserHandler(userService)
 
 	router := gin.Default()
-	router.Use(cors.Default()) // cors
+	router.Use(cors.Default()) // cors management
 
 	// load templates
 	// router.LoadHTMLGlob("web/templates/**/*")
@@ -86,6 +86,8 @@ func main() {
 
 	// WEB Handler Section routes..
 	router.GET("/users", userWebHandler.Index)
+	router.GET("/users/new", userWebHandler.New)
+	router.POST("/users", userWebHandler.Create)
 	
 	router.Run(":3131")
 }
